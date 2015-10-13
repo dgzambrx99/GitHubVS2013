@@ -1,0 +1,68 @@
+@model IEnumerable<ProductionWIP.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Usuarios";
+    
+}
+
+<h2>
+    Users
+</h2>
+
+<p>
+    <a  href="@Url.Action("Create","Users")" id="add-row2"><i class="glyphicon glyphicon-plus"></i> Add New User</a>
+
+</p>
+
+
+<table class="table table-bordered table-hover table-striped datatable" style="font-size: 12px">
+    <thead>
+        <tr>
+            <th width="80"></th>
+
+            <th>
+                UserName
+            </th>
+            @*<th>
+                Name
+            </th>*@
+            <th>
+                Role
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr ondblclick='location.href="@Url.Action("Edit", new { id = item.Id })"' style="cursor:pointer;">
+                <td>
+                    <a id="@("link_" + item.Id)" class="table-actions" href="@Url.Action("Edit", new { id = item.Id })"><i class="glyphicon glyphicon-pencil"></i></a>
+                    |
+                    &nbsp;
+                    <a style="cursor:pointer" class="table-actions" onclick="if(confirm('Are you sure?')){location.href='@Url.Action("Delete_", "Usuarios", new { id = item.Id})'}"><i class="glyphicon glyphicon-remove"></i></a>
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>*@
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.RoleId)
+                    </td>*@
+                <td>
+                    @*@if (item.Roles.Count > 0)
+                    {
+                        @item.Roles.FirstOrDefault().RoleId;
+                    }*@
+                    Admin
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+

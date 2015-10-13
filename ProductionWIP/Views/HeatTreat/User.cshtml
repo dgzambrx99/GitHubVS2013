@@ -1,0 +1,832 @@
+﻿@model ProductionWIP.Models.HeatTreat
+@{
+    ViewBag.Title = "Heat Treat Input";
+    List<string> Columns = ViewBag.Columns;
+    List<ProductionWIP.Models.UserHideColumns> SelectedHideColumns = new List<ProductionWIP.Models.UserHideColumns>();
+    if (ViewBag.ColumnsToHideUser != null)
+    {
+        SelectedHideColumns = ViewBag.ColumnsToHideUser;
+    }
+
+    List<ProductionWIP.Models.ColumnNames> Visibility = ViewBag.ColumnsFull;
+    List<string> visClasses = new List<string>();
+    foreach (var z in Visibility)
+    {
+
+        if (SelectedHideColumns.Where(x => x.ColumnNamesId == z.ColumnNamesId).Count() > 0)
+        {
+            visClasses.Add("HideColumn");
+        }
+        else
+        {
+            visClasses.Add("");
+        }
+    }
+
+
+}
+<style>
+    .imgupload {
+        display: none;
+    }
+
+    .field-validation-error{
+        color:red;
+        font-size: 13px;
+        display: block;
+    }
+
+    .HideColumn {
+        display: none;
+    }
+</style>
+@if (ViewBag.OperatorNumber != null)
+{
+    <div class="alert alert-dismissible alert-warning">
+
+        <a href="@Url.Action("OperatorLogOff")" class="close">
+            <i class="glyphicon glyphicon-log-out"></i>
+        </a>
+        <h4>Welcome <b>@ViewBag.OperatorName</b> &nbsp;|&nbsp; Operator Number: <b>@ViewBag.OperatorNumber</b></h4>
+        <p>If you are not <b>@ViewBag.OperatorName</b> please <a href="@Url.Action("OperatorLogOff")" class="alert-link">click here to log off, and try again</a>.</p>
+    </div>
+}
+<h4><b>@ViewBag.Title</b></h4>
+@if (ViewBag.Role == "User")
+{
+    <button onclick="LoadAutoDataModal()" class="btn btn-default btn-xs">
+        <i class="glyphicon glyphicon-list"></i>
+        Change Default Values
+    </button>
+    @Html.Raw("&nbsp;");
+    <button onclick="LoadColumnsMenu()" class="btn btn-default btn-xs">
+        <i class="glyphicon glyphicon-resize-small"></i>
+        Change Visible Columns
+    </button>
+
+
+}
+
+<hr />
+<h6>Add Row:</h6>
+<div class="row" id="divAddRow">
+    @if (ViewBag.Role == "User" || ViewBag.Role == "Admin")
+    {
+        <form id="formAddRow" enctype="multipart/form-data">
+       
+
+
+            @Html.Hidden("Result")
+            <input type="hidden" name="Role" value="@ViewBag.Role" />
+            <div class="col-md-2 @visClasses.ElementAt(1)">
+                <label class="control-label">@Columns[1]</label>
+                @Html.EditorFor(model => model.JobCardNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.JobCardNumber, "", new { @class = "text-danger" })
+                <div class="imgupload">
+                    @Html.LabelFor(model => model.Image, "Images", htmlAttributes: new { @class = "control-label col-md-12", @style = "margin-top:5px" })
+                    <br />
+                    <input id="uImage" type="file" accept="image/*;capture=camera" name="uImage" style="font-size: 12px; margin-top: 5px">
+                    <input id="uImage2" type="file" accept="image/*;capture=camera" name="uImage2" style="font-size: 12px; margin-top: 5px">
+                    <input id="uImage3" type="file" accept="image/*;capture=camera" name="uImage3" style="font-size: 12px; margin-top: 5px">
+                    <input id="uImage4" type="file" accept="image/*;capture=camera" name="uImage4" style="font-size: 12px; margin-top: 5px">
+                    <input id="uImage5" type="file" accept="image/*;capture=camera" name="uImage5" style="font-size: 12px; margin-top: 5px">
+
+                </div>
+
+                <button id="btnUpload" type="button" onclick="showImages()" class="btn btn-default btn-xs" style="margin-top:10px">
+                    <i class="glyphicon glyphicon-picture"></i>
+                    Add Images
+                </button>
+            </div>
+            @if (ViewBag.Role == "User")
+            {
+                <div class="col-md-2 @visClasses.ElementAt(2)">
+                    <input type="hidden" name="OperatorsId" id="OperatorsId" value="@ViewBag.OperatorId" />
+                    <input type="hidden" name="FirstName" id="FirstName" value="@ViewBag.OperatorName" />
+
+                    <label class="control-label">@Columns[2]</label>
+                    <input type="text" id="OperatorName" readonly class="form-control" value="@ViewBag.OperatorName" />
+
+                    @*@Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+            }
+            else
+            {
+                <div class="col-md-2">
+                    <label class="control-label">@Columns[2]</label>
+                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+                </div>
+            }
+            <div class="col-md-2 @visClasses.ElementAt(3)">
+                <label class="control-label">@Columns[3]</label>
+                @Html.EditorFor(model => model.StationNumber, new { htmlAttributes = new { @class = "form-control autostation" } })
+                @Html.ValidationMessageFor(model => model.StationNumber, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2 @visClasses.ElementAt(4)">
+                <label class="control-label">@Columns[4]</label>
+                @Html.EditorFor(model => model.Temperature, new { htmlAttributes = new { @class = "form-control autotemp" } })
+                @Html.ValidationMessageFor(model => model.Temperature, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2 @visClasses.ElementAt(5)">
+                <label class="control-label">@Columns[5]</label>
+                @Html.EditorFor(model => model.Load, new { htmlAttributes = new { @class = "form-control autoload" } })
+                @Html.ValidationMessageFor(model => model.Load, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="col-md-2">
+                <br />
+                <button id="btnAddRow" type="submit" @*onclick="addRow()"*@ class="btn btn-default">
+                    <i class="glyphicon glyphicon-plus-sign"></i>
+
+                </button>
+                @Html.ValidationMessage("NoData")
+            </div>
+
+        </form>
+
+    }
+    @if (ViewBag.Role == "Embed")
+    {
+
+        <form name="newRecord" method="post" action="">
+            @*<input type="text" readonly="readonly" style="font-size:80%; color:#B8B8B8 ;" value="YYYY-MM-DD HH:MM:SS" name="timestamp">*@
+
+            <div class="col-md-2">
+                <label class="control-label">@Columns[1]</label>
+                <input type="text" name="jobCardNo" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label class="control-label">@Columns[2]</label>
+                <input type="text" name="firstName" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label class="control-label">@Columns[3]</label>
+                <input type="text" name="stationNumber" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label class="control-label">@Columns[4]</label>
+                <input type="text" name="temp" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label class="control-label">@Columns[5]</label>
+                <input type="text" name="load" class="form-control">
+            </div>
+            <input type="submit" style="display:block" value="Submit" />
+        </form>
+        @Html.ValidationSummary(false)
+
+        if (ViewBag.Result == "DataSaved")
+        {
+            <br />
+            <hr />
+            <p>Data Saved!</p>
+        }
+
+        if (ViewBag.Result == "DataError")
+        {
+            <br />
+            <hr />
+            <p>Error: Please verify the fields. @ViewBag.ResultDetail</p>
+        }
+    }
+</div>
+
+@if (ViewBag.Role == "User" || ViewBag.Role == "Admin")
+{
+    <hr />
+    <h6>Search:</h6>
+    <div id="divSearch">
+        <div class="row">
+            <div class="col-md-12">
+                <select name="MatchAll">
+                    <option value="True">Match all fields</option>
+                    <option value="False">Match some fields</option>
+                </select>
+
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-2 @visClasses.ElementAt(0)">
+                <label class="control-label">@Columns[0]</label>
+                <input id="DatePartial" name="DatePartial" class="form-control" />
+                @*@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control" } })*@
+                <span style="font-size: 12px">YYYY-MM-DD HH:MM:SS</span>
+                @*@Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })*@
+
+            </div>
+            <div class="col-md-2 @visClasses.ElementAt(1)">
+                <label class="control-label">@Columns[1]</label>
+                @Html.EditorFor(model => model.JobCardNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.JobCardNumber, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="col-md-2 @visClasses.ElementAt(2)">
+                <label class="control-label">@Columns[2]</label>
+                @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-2 @visClasses.ElementAt(3)">
+                <label class="control-label">@Columns[3]</label>
+                @Html.EditorFor(model => model.StationNumber, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.StationNumber, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1 @visClasses.ElementAt(4)">
+                <label class="control-label">@Columns[4]</label>
+                @Html.EditorFor(model => model.Temperature, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Temperature, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1 @visClasses.ElementAt(5)">
+                <label class="control-label">@Columns[5]</label>
+                @Html.EditorFor(model => model.Load, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Load, "", new { @class = "text-danger" })
+            </div>
+            <div class="col-md-1">
+                <br />
+                <button type="button" class="btn btn-default" onclick="loadData()">
+                    <i class="glyphicon glyphicon-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <div id="divData">
+                Loading data...
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12" style="font-size: 11px">
+            <h6>
+                <b>Legend:</b>
+            </h6>
+            <span>
+                <i class="glyphicon glyphicon-plus-sign"></i>
+                Add a row after entering correct information.
+            </span>
+            <br />
+            @if (ViewBag.Role == "Admin")
+            {
+                <span>
+                    <i class="glyphicon glyphicon-refresh"></i>
+                    Update a row after editing it.
+                </span>
+                <br />
+                <span>
+                    <i class="glyphicon glyphicon-remove"></i>
+                    Delete a row.
+                </span>
+                <br />
+
+            }
+            @*<span>
+                    <i class="glyphicon glyphicon-list-alt"></i>
+                    Export to Excel
+                </span>*@
+        </div>
+    </div>
+
+
+}
+
+<!-- Modal -->
+<div class="modal fade" id="modalImage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">&nbsp;</h4>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                @*<button type="button" class="btn btn-primary" onclick="SubmitForm()">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>
+                        &nbsp;
+                        Save changes
+                    </button>*@
+                @*<button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">
+                        <i class="glyphicon glyphicon-remove"></i>
+                        &nbsp;
+                        Close
+                    </button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Role == "User")
+{
+    <!--Data Modal -->
+    <div class="modal fade" id="modalAutoData" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Set Station, Temperature and Load.</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="lead" style="font-size: 14px">
+                        To automatically fill the Station Number, Temperature and Load fields, please enter the data below.
+                        Every new record that you add, will have this values by default.
+                        You can change this values later by clicking the <b>-Change Default Values-</b> button.
+                    </p>
+                    <label>@Columns[3]</label>
+                    <input type="text" id="auto_StationNumber" class="form-control" />
+                    <label>@Columns[4]</label>
+                    <input type="text" id="auto_Temperature" class="form-control" />
+                    <label>@Columns[5]</label>
+                    <input type="text" id="auto_Load" class="form-control" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="setAutoValues()">
+                        <i class="glyphicon glyphicon-edit"></i>
+                        &nbsp;
+                        Set values
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnClose">
+                        <i class="glyphicon glyphicon-remove"></i>
+                        &nbsp;
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Columns Modal -->
+    <div class="modal fade" id="modalShowColumns" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Hide Columns</h4>
+                </div>
+                <div class="modal-body" id="divColumnsToHide">
+                    <p class="lead" style="font-size: 14px">
+                        Please check the columns that you would like to hide in the page.
+                    </p>
+
+                    @for (int i = 0; i < Visibility.Count; i++)
+                    {
+                        string chk = "";
+                        if (SelectedHideColumns.Where(x => x.ColumnNamesId == Visibility[i].ColumnNamesId).Count() > 0)
+                        {
+
+                            chk = "checked";
+                        }
+                        <label style="min-width: 200px">@Visibility[i].Label</label>
+                        <input type="checkbox" name="ColumnsToHide[@i]"
+                               value="@Visibility[i].ColumnNamesId" @chk />
+                        <input type="hidden" name="ColumnsToHide[@i]" value="0"><br />
+
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="setColumnsVisibility()">
+                        <i class="glyphicon glyphicon-edit"></i>
+                        &nbsp;
+                        Set values
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCloseColumns">
+                        <i class="glyphicon glyphicon-remove"></i>
+                        &nbsp;
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script>
+        var currentPage = 1;
+        var numberPages = 0;
+        var pageSize = 5;
+        var Role = '@ViewBag.Role';
+        var OperatorName = '@ViewBag.OperatorName';
+        var OperatorId = '@ViewBag.OperatorId';
+        var autoValues = false;
+
+
+
+        function loadData() {
+
+            if (Role == "Embed") { return; }
+
+            $.ajax({
+                url: "@Url.Action("LoadData")",
+                method: 'GET',
+                data: $("#divSearch :input").serialize() + "&PageSize=" + pageSize + "&pageNumber=" + currentPage + "&Role=" + Role + "&OperatorsId=" + OperatorId
+            })
+         .done(function (data) {
+             $('#divData').html(data);
+
+         })
+        .fail(function (jqXHR, textStatus, errorThrown) { alert("There was an error processing the request, please try again") });
+        }
+
+
+        $(document).ready(function (e) {
+
+            //checkCookieAutoValues();
+
+
+            $("#formAddRow").on('submit', (function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: "@Url.Action("AddRow")", // Url to which the request is send
+                    type: "POST",                 // Type of request to be send, called as method
+                    data: new FormData(this),     // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+                    contentType: false,           // The content type used when sending data to the server.
+                    cache: false,                 // To unable request pages to be cached
+                    processData: false,           // To send DOMDocument or non processed data file it is set to false
+                    success: function (data)      // A function to be called if request succeeds
+                    {
+                        //RefreshPartial(data, "divAddRow");
+                        //Changed to avoid missing functionality - Bug fixed!
+                        RefreshPartial(data, "formAddRow");
+
+
+                        if ($('#formAddRow').html().indexOf("DataSaved") > 0) {
+                            toastr.options.closeButton = true;
+                            toastr["success"]("", "Row Added!");
+                            loadData();
+
+                            if (autoValues == true) {
+                                //Auto User Values
+                                $(".autostation").val($("#auto_StationNumber").val());
+                                $(".autotemp").val($("#auto_Temperature").val());
+                                $(".autoload").val($("#auto_Load").val());
+                            }
+
+                            //Focus theField for another input
+                            $("#JobCardNumber").focus();
+
+                        }
+                        if ($('#formAddRow').html().indexOf("DataError") > 0) {
+                            toastr["error"]("", "Error(s) in the form, please verify.");
+                        }
+                    }
+                });
+            }));
+
+        });
+
+        @*Old Code Without Images*@
+        @*function addRow() {
+            $.ajax({
+                url: "@Url.Action("AddRow")",
+                method: 'POST',
+                data: $("#divAddRow :input").serialize()
+            })
+    .done(function (data) {
+
+        RefreshPartial(data, "divAddRow");
+        if ($('#divAddRow').html().indexOf("DataSaved") > 0) {
+
+            toastr.options.closeButton = true;
+            toastr["success"]("", "Row Added!");
+
+            loadData();
+        }
+        if ($('#divAddRow').html().indexOf("DataError") > 0) {
+            toastr["error"]("", "Error(s) in the form, please verify.");
+
+        }
+
+    })
+   .fail(function (jqXHR, textStatus, errorThrown) { alert("There was an error processing the request, please try again") });
+        }*@
+
+
+        function Delete(id) {
+            if (!confirm("Are you sure?")) { return; }
+
+            $.ajax({
+                url: "@Url.Action("DeleteRow")",
+                method: 'POST',
+                data: { id: id }
+            })
+        .done(function (data) {
+
+
+            if (data == "Ok") {
+
+                toastr.options.closeButton = true;
+                toastr["info"]("", "Row Deleted!");
+
+                loadData();
+            }
+
+
+        })
+       .fail(function (jqXHR, textStatus, errorThrown) { alert("There was an error processing the request, please try again") });
+
+        }
+
+
+
+
+        function Update(id, index) {
+            $.ajax({
+                url: "@Url.Action("EditRow")",
+                method: 'POST',
+                data: $("#record-" + id + " :input").serialize() + "&index=" + index
+            })
+        .done(function (data) {
+
+            $('#record-' + id).html(data);
+            if ($('#record-' + id).html().indexOf("DataSaved") > 0) {
+
+                toastr.options.closeButton = true;
+                toastr["success"]("", "Row Edited!");
+
+                loadData();
+            }
+            if ($('#record-' + id).html().indexOf("DataError") > 0) {
+                toastr["error"]("", "Error(s) in the form, please verify.");
+
+            }
+
+        })
+       .fail(function (jqXHR, textStatus, errorThrown) { alert("There was an error processing the request, please try again") });
+
+
+        }
+
+        function setPage(type) {
+            if (type == 'first') {
+                currentPage = 1;
+
+            }
+            if (type == 'previous') {
+                currentPage--;
+
+            }
+            if (type == 'next') {
+                currentPage++;
+
+            }
+            if (type == 'last') {
+                currentPage = numberPages;
+            }
+
+            loadData();
+        }
+
+        function goToPage(page) {
+
+            currentPage = page;
+
+            loadData();
+
+        }
+        function changeItems(size) {
+            pageSize = size;
+            loadData();
+
+
+        }
+
+        function openImage(id, a, b, c, d, e) {
+
+            var htmlimg = '';
+
+
+            if (a.length > 0) {
+                htmlimg += '<img src="@Url.Content("~/Attachments/")' + id + '.png" style="width:100%"/><hr/>';
+            }
+            if (b.length > 0) {
+                htmlimg += '<img src="@Url.Content("~/Attachments/")' + id + '_2.png" style="width:100%; margin-top:30px"  /><hr/>';
+            }
+            if (c.length > 0) {
+                htmlimg += '<img src="@Url.Content("~/Attachments/")' + id + '_3.png" style="width:100%; margin-top:30px" /><hr/>';
+            }
+            if (d.length > 0) {
+                htmlimg += '<img src="@Url.Content("~/Attachments/")' + id + '_4.png" style="width:100%; margin-top:30px"  /><hr/>';
+            }
+            if (e.length > 0) {
+                htmlimg += '<img src="@Url.Content("~/Attachments/")' + id + '_5.png" style="width:100%; margin-top:30px"  /><hr/>';
+            }
+            $("#modalImage .modal-body").html(htmlimg);
+            $('#modalImage').modal('show');
+
+
+        }
+
+        function showImages() {
+            $(".imgupload").fadeIn('slow');
+            $("#btnUpload").fadeOut(1);
+
+        }
+
+        $('#divAddRow, #divSearch').find('input:text').val('');
+        if (OperatorName.length > 0) {
+            $('#OperatorName').val(OperatorName);
+
+        }
+
+        var startupLoadAuto = true;
+
+        function LoadAutoDataModal() {
+            $("#auto_StationNumber").val('');
+            $("#auto_Temperature").val('');
+            $("#auto_Load").val('');
+
+            checkCookieAutoValues();
+
+            if (
+                (
+                $("#auto_StationNumber").val() == '' &&
+                $("#auto_Temperature").val() == '' &&
+                 $("#auto_Load").val() == ''
+                ) ||
+                startupLoadAuto == false
+                ) {
+
+
+                if (getCookie("autoValues_temporalSet").length > 0 && startupLoadAuto == true) {
+                    startupLoadAuto = false;
+                    return;
+                }
+                //Only if empty
+                $('#modalAutoData').modal('show');
+
+
+
+            }
+
+            startupLoadAuto = false;
+        }
+
+        function setAutoValues() {
+            autoValues = true;
+            $(".autostation").val($("#auto_StationNumber").val());
+            $(".autotemp").val($("#auto_Temperature").val());
+            $(".autoload").val($("#auto_Load").val());
+
+            setCookie("autoValues_" + OperatorId + "_Station", $("#auto_StationNumber").val(), 1);
+            setCookie("autoValues_" + OperatorId + "_Temperature", $("#auto_Temperature").val(), 1);
+            setCookie("autoValues_" + OperatorId + "_Load", $("#auto_Load").val(), 1);
+            setCookie("autoValues_temporalSet", 1);
+
+
+
+            $('#modalAutoData').modal('toggle');
+        }
+
+        function checkCookieAutoValues() {
+
+            var autostation = getCookie("autoValues_" + OperatorId + "_Station");
+            var autotemp = getCookie("autoValues_" + OperatorId + "_Temperature");
+            var autoload = getCookie("autoValues_" + OperatorId + "_Load");
+
+
+            if (autostation.length > 0) {
+                autoValues = true;
+                $(".autostation").val(autostation);
+                $("#auto_StationNumber").val(autostation);
+
+            }
+            if (autotemp.length > 0) {
+                autoValues = true;
+                $(".autotemp").val(autotemp);
+                $("#auto_Temperature").val(autotemp);
+
+            }
+            if (autoload.length > 0) {
+                autoValues = true;
+                $(".autoload").val(autoload);
+                $("#auto_Load").val(autoload);
+
+            }
+        }
+
+        //Cookies Functions
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires;
+        }
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1);
+                if (c.indexOf(name) == 0) return c.substring(name.length, c.length);
+            }
+            return "";
+        }
+
+        //Columns Functions
+
+        function LoadColumnsMenu() {
+            $('#modalShowColumns').modal('show');
+
+
+
+        }
+
+        function setColumnsVisibility() {
+
+
+            $.ajax({
+                url: "@Url.Action("ChangeColumns")",
+                method: 'POST',
+                data: $("#divColumnsToHide :input").serialize() + "&OperatorsId=" + OperatorId
+            })
+        .done(function (data) {
+
+            location.reload();
+            //$('#record-' + id).html(data);
+            //if ($('#record-' + id).html().indexOf("DataSaved") > 0) {
+
+            //    toastr.options.closeButton = true;
+            //    toastr["success"]("", "Row Edited!");
+
+            //    loadData();
+            //}
+            //if ($('#record-' + id).html().indexOf("DataError") > 0) {
+            //    toastr["error"]("", "Error(s) in the form, please verify.");
+
+            //}
+
+        })
+       .fail(function (jqXHR, textStatus, errorThrown) { alert("There was an error processing the request, please try again") });
+
+
+
+        }
+
+    </script>
+    @if (ViewBag.IsMain != null && ViewBag.Role != "Embed")
+    {
+        <script>
+            setTimeout("loadData()", 1);
+        </script>
+
+    }
+
+
+    @if (ViewBag.LoadAutoData != null)
+    {
+        <script>
+            LoadAutoDataModal();
+        </script>
+    }
+
+    @if (ViewBag.Role == "User" || ViewBag.Role == "Admin")
+    {
+        <script>
+
+
+
+            function CheckNewPushData() {
+
+                $.ajax({
+                    url: "@Url.Action("CheckNewPushData")",
+                    method: 'POST'
+                 
+                })
+            .done(function (data) {
+                //alert(data);
+                if (data == 1) {
+                 
+                    loadData();
+                }
+
+                setTimeout("CheckNewPushData()", 5000);
+
+
+                //LastUpdatedRecordTime = 0;
+
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+
+                setTimeout("CheckNewPushData()", 5000);
+
+                //Error ignored
+                //alert("There was an error processing the request, please try again")
+            });
+
+
+
+            }
+
+            setTimeout("CheckNewPushData()", 5000);
+        </script>
+
+    }
+}

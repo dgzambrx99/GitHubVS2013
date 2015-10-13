@@ -1,0 +1,62 @@
+﻿@model List<ProductionWIP.Models.HeatTreat>
+@{
+    int i = ViewBag.num;
+}
+
+@Html.HiddenFor(model => Model[i].HeatTreatId)
+@Html.HiddenFor(model => Model[i].Image)
+@Html.HiddenFor(model => Model[i].Image2)
+@Html.HiddenFor(model => Model[i].Image3)
+@Html.HiddenFor(model => Model[i].Image4)
+@Html.HiddenFor(model => Model[i].Image5)
+
+
+
+<td>
+    @*@Html.EditorFor(model => Model[i].Date, new { htmlAttributes = new { @class = "form-control" } })*@
+    @Model[i].Date
+    @Html.HiddenFor(model => Model[i].Date)
+    @Html.ValidationMessageFor(model => Model[i].Date, "", new { @class = "text-danger" })
+</td>
+<td>
+    @Html.EditorFor(model => Model[i].JobCardNumber, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => Model[i].JobCardNumber, "", new { @class = "text-danger" })
+</td>
+<td>
+    @Html.EditorFor(model => Model[i].FirstName, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => Model[i].FirstName, "", new { @class = "text-danger" })
+</td>
+<td>
+    @Html.EditorFor(model => Model[i].StationNumber, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => Model[i].StationNumber, "", new { @class = "text-danger" })
+</td>
+<td>
+    @Html.EditorFor(model => Model[i].Temperature, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => Model[i].Temperature, "", new { @class = "text-danger" })
+</td>
+<td>
+    @Html.EditorFor(model => Model[i].Load, new { htmlAttributes = new { @class = "form-control" } })
+    @Html.ValidationMessageFor(model => Model[i].Load, "", new { @class = "text-danger" })
+</td>
+<td>
+    @if (Model[i].Image == true || Model[i].Image2 == true || Model[i].Image3 == true || Model[i].Image4 == true || Model[i].Image5 == true)
+    {
+        <a class="btn btn-info btn-xs" onclick="openImage(@Model[i].HeatTreatId,'@Model[i].Image','@Model[i].Image2','@Model[i].Image3','@Model[i].Image4','@Model[i].Image5')">
+            <i class="glyphicon glyphicon-picture"></i>
+        </a>
+
+    }
+
+
+</td>
+
+<td width="70">
+    <a onclick="Update(@Model[i].HeatTreatId,@i)" class="btn btn-xs btn-success">
+        <i class="glyphicon glyphicon-refresh"></i>
+    </a>
+    <a onclick="Delete(@Model[i].HeatTreatId)" class="btn btn-xs btn-danger">
+        <i class="glyphicon glyphicon-remove"></i>
+    </a>
+</td>
+
+@Html.Hidden("Result")

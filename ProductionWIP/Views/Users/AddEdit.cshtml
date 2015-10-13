@@ -1,0 +1,141 @@
+﻿@model ProductionWIP.Models.RegisterViewModelByAdmin
+
+@{
+    ViewBag.Title = "User";
+
+
+}
+<style>
+    .validation-summary-errors {
+        color: red;
+    }
+
+    .field-validation-error {
+        color: red;
+    }
+</style>
+<div class="container-fluid2 main-content2">
+    <div class="page-title">
+        <h2>
+            Usuario
+        </h2>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="widget-container">
+             
+                <a class="" href="@Url.Action("Index")"><i class="glyphicon glyphicon-arrow-left"></i> Return to List</a>
+
+                <hr />
+                <div class="widget-content padded">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.UserId)
+                        @*@Html.HiddenFor(model => model.CuentasMaestrasId)*@
+                        @Html.ValidationSummary(false)
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.UserName)
+                                        @Html.TextBoxFor(model => model.UserName, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.UserName)
+
+
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Password)
+                                        @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Password)
+
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.ConfirmPassword)
+                                        @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.ConfirmPassword)
+
+                                    </div>
+                                    @*<div class="form-group">
+                                        @Html.LabelFor(model => model.Name)
+                                        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Name)
+
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Email)
+                                        @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Email)
+
+                                    </div>*@
+
+
+
+                                </div>
+                                <div class="col-md-6">
+
+
+                                  
+                                    @*@if (Model.UserId.Length < 5)
+                                    {
+                                        @Html.Label("Rol")
+
+                                        <div class="widget-content padded">
+                                            <blockquote>
+                                                <p>Save to Add Roles</p>
+                                           
+
+                                            </blockquote>
+                                        </div>
+                                    }
+                                    else
+                                    {
+
+                                        <div class="form-group">
+                                            @Html.Label("Rol")
+
+                                            <br />
+                                            <select name="Role">
+
+                                                <option value="Administrator" @if (Model.Role.Equals("Administrator"))
+                                                                              { @Html.Raw("selected")       }>
+                                                    Administrator
+                                                </option>
+                                                
+
+
+                                            </select>
+
+                                            @Html.ValidationMessageFor(model => model.Role)
+
+
+                                        </div>
+
+
+                                   
+                                        
+
+                                    }*@
+
+                                </div>
+                            </div>
+
+
+                            <br />
+
+
+
+                            @*<a id="btnabrir" class="btn btn-primary" data-toggle="modal" style="display:none" href="#myModal">Bootstrap Modal</a>*@
+                            <button class="btn btn-primary btn-lg" type="submit"><i class="glyphicon glyphicon-floppy-disk"></i> Save</button>
+                            <br /><br />
+                        </fieldset>
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@*<br />*@
+@*<a class="" href="@Url.Action("Index")"><i class="glyphicon glyphicon-arrow-left"></i> Return to List</a>*@

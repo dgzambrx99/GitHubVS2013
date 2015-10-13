@@ -1,0 +1,162 @@
+﻿@model List<ProductionWIP.Models.HeatTreat>
+@{
+    List<string> Columns = ViewBag.Columns;
+
+    List<ProductionWIP.Models.UserHideColumns> SelectedHideColumns = new List<ProductionWIP.Models.UserHideColumns>();
+    if (ViewBag.ColumnsToHideUser != null)
+    {
+        SelectedHideColumns = ViewBag.ColumnsToHideUser;
+    }
+
+    List<ProductionWIP.Models.ColumnNames> Visibility = ViewBag.ColumnsFull;
+    List<string> visClasses = new List<string>();
+    foreach (var z in Visibility)
+    {
+
+        if (SelectedHideColumns.Where(x => x.ColumnNamesId == z.ColumnNamesId).Count() > 0)
+        {
+            visClasses.Add("HideColumn");
+        }
+        else
+        {
+            visClasses.Add("");
+        }
+    }
+}
+
+<table class="table" id="rowBlock">
+    <tr>
+        <th class="@visClasses.ElementAt(0)">
+            @Columns[0]
+        </th>
+        <th class="@visClasses.ElementAt(1)">
+            @Columns[1]
+        </th>
+        <th class="@visClasses.ElementAt(2)">
+            @Columns[2]
+        </th>
+        <th class="@visClasses.ElementAt(3)">
+            @Columns[3]
+        </th>
+        <th class="@visClasses.ElementAt(4)">
+            @Columns[4]
+        </th>
+        <th class="@visClasses.ElementAt(5)">
+            @Columns[5]
+        </th>
+        <th></th>
+        <th></th>
+
+    </tr>
+    @if (ViewBag.Role.Equals("User"))
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td class="@visClasses.ElementAt(0)">
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td class="@visClasses.ElementAt(1)">
+                    @Html.DisplayFor(modelItem => item.JobCardNumber)
+                </td>
+                <td class="@visClasses.ElementAt(2)">
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td class="@visClasses.ElementAt(3)">
+                    @Html.DisplayFor(modelItem => item.StationNumber)
+                </td>
+                <td class="@visClasses.ElementAt(4)">
+                    @Html.DisplayFor(modelItem => item.Temperature)
+                </td>
+                <td class="@visClasses.ElementAt(5)">
+                    @Html.DisplayFor(modelItem => item.Load)
+                </td>
+                <td colspan="2">
+                    @if (item.Image == true || item.Image2 == true || item.Image3 == true || item.Image4 == true || item.Image5 == true)
+                    {
+                        <a class="btn btn-info btn-xs" onclick="openImage(@item.HeatTreatId,'@item.Image','@item.Image2','@item.Image3','@item.Image4','@item.Image5')">
+                            <i class="glyphicon glyphicon-picture"></i>
+                        </a>
+
+                    }
+                </td>
+
+            </tr>
+
+        }
+    }
+    @if (ViewBag.Role.Equals("Admin"))
+    {
+        for (int i = 0; i < Model.Count; i++)
+        {
+            <tr id="record-@Model[i].HeatTreatId">
+
+                @{
+            ViewBag.num = i;
+                }
+                @{Html.RenderPartial("RowDetail", Model);}
+
+            </tr>
+        }
+    }
+
+</table>
+<div class="row" style="font-size: 12px">
+    <div class="col-md-2">
+        Total rows: @ViewBag.Rows
+    </div>
+    <div class="col-md-7">
+        <a onclick="setPage('first')" style=" cursor:pointer">First</a>
+        <a onclick="setPage('previous')" style="cursor:pointer">Previous</a>
+
+        @for (int i = ViewBag.Current -1; i < ViewBag.Pages; i++)
+        {
+            <a style="cursor:pointer" onclick="goToPage(@(i+1))">[@(i + 1)]</a>
+            if (i > 20)//Change this code to adjust the page size.
+            {
+
+                break;
+            }
+
+        }
+        <a onclick="setPage('next')" style="cursor:pointer">Next</a>
+        <a onclick="setPage('last')" style="cursor:pointer">Last</a>
+    </div>
+    <div class="col-md-1">
+        Page:
+        <select onchange="goToPage(this.value)">
+            @for (int i = 0; i < ViewBag.Pages; i++)
+            {
+                <option @if (ViewBag.Current == i + 1) { @(" selected ")            }>@(i + 1)</option>
+            }
+
+
+        </select>
+    </div>
+    <div class="col-md-2">
+        Items per Page:
+        <select onchange="changeItems(this.value)">
+            <option @if (ViewBag.PageSize == 5) { @(" selected ")           }>
+                5
+            </option>
+            <option @if (ViewBag.PageSize == 10) { @(" selected ")           }>
+                10
+            </option>
+            <option @if (ViewBag.PageSize == 25) { @(" selected ")           }>
+                25
+            </option>
+            <option @if (ViewBag.PageSize == 50) { @(" selected ")           }>
+                50
+            </option>
+            <option @if (ViewBag.PageSize == 100) { @(" selected ")            }>
+                100
+            </option>
+        </select>
+    </div>
+</div>
+
+<script>
+    currentPage = @ViewBag.Current;
+    numberPages = @ViewBag.Pages;
+    pageSize = @ViewBag.PageSize;
+</script>

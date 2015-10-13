@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ProductionWIP.Models.ColumnNames>
+
+@{
+    ViewBag.Title = "Columns";
+}
+
+<h2>Columns</h2>
+
+<p>
+    @*@Html.ActionLink("Create New", "Create")*@
+</p>
+<table class="table">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Order)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Label)
+        </th>
+     
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.ColumnNamesId }) @*|*@
+            @*@Html.ActionLink("Delete", "Delete", new { id = item.ColumnNamesId })*@
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Order)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Label)
+        </td>
+      
+    </tr>
+}
+
+</table>

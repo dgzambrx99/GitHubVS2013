@@ -1,0 +1,40 @@
+﻿@model IEnumerable<ProductionWIP.Models.EmbedCodes>
+
+@{
+    ViewBag.Title = "Embed Codes";
+}
+
+<h2>Embed Codes</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Identifier)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Token)
+        </th>
+      
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.EmbedCodesId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.EmbedCodesId })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Identifier)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Token)
+        </td>
+      
+    </tr>
+}
+
+</table>

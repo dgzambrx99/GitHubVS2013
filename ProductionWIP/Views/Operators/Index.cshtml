@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ProductionWIP.Models.Operators>
+
+@{
+    ViewBag.Title = "Operators";
+}
+
+<h2>Operators</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Number)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.OperatorsId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.OperatorsId })
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+
+        </tr>
+    }
+
+</table>
